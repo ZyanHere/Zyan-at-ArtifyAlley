@@ -1,9 +1,57 @@
 "use client";
 
 import "@styles/Register.scss";
+import { useRouter } from "next/navigation";
+import { useEffect, useState } from "react";
 import { FcGoogle } from "react-icons/fc";
 
 const Register = () => {
+  const [formData, setFormData] = useState({
+    name: "",
+    email: "",
+    password: "",
+    confirmPassword: "",
+    profileImage: null,
+  });
+
+  const handleChange = () => {
+    e.preventDefault();
+    const { name, value, files } = e.target;
+    setFormData({
+      ...formData,
+      [name]: value,
+      [name]: name === profileImage ? files[0] : value,
+    });
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    try {
+      const registerForm = new FormData();
+      for (var key in formData) {
+        registerForm.append(key, formData[key]);
+      }
+
+      const response = await fetch("/api/register/", {
+        method: "POST",
+        body: registerForm,
+      });
+
+      if (response.ok) {
+        Router.push("/")
+      }
+    } catch (error) {
+        console.log("Registration failed", err.message);
+    }
+  };
+
+  const router = useRouter();
+
+  const [passwordMatch, setPasswordMatch] = useState(true)
+  useEffect(() => {
+    setPasswordMatch(formData.password === formData.confirmPassword)
+  })
+
   return (
     <div className="register">
       <img
@@ -12,11 +60,43 @@ const Register = () => {
         className="register_decor"
       />
       <div className="register_content">
-        <form className="register_content_form">
-          <input placeholder="Username" name="usename" required />
-          <input placeholder="Email" name="email" required />
-          <input placeholder="Password" name="password" required />
-          <input placeholder="Confirm Password" name="confirm password" required />
+        <form className="register_content_form" onSubmit={handleSubmit}>
+          <input
+            placeholder="Username"
+            name="usename"
+            value={formData.username}
+            onChange={handleChange}
+            required
+          />
+          <input
+            placeholder="Email"
+            type="email"
+            name="email"
+            value={formData.email}
+            onChange={handleChange}
+            required
+          />
+          <input
+            placeholder="Password"
+            type="password"
+            name="password"
+            value={formData.password}
+            onChange={handleChange}
+            required
+          />
+          <input
+            placeholder="Confirm Password"
+            type="password"
+            name="confirm password"
+            value={formData.confirmPassword}
+            onChange={handleChange}
+            required
+          />
+          {!passwordMatched && (
+            <p style={{color: "red"}}>
+              Passwords do not match
+            </p>
+          )}
           <input
             id="image"
             type="file"
@@ -29,7 +109,14 @@ const Register = () => {
             <img src="/assets/addImage.png" alt="add profile" />
             <p>Upload Profile Photo</p>
           </label>
-          <button type="submit">Register</button>
+          {formData.profileImage && (
+            <img
+              src={URL.createObjectURL(formData.profileImage)}
+              alt="Profile"
+              style={{ maxWidth: "80px", maxHeight: "100px" }}
+            />
+          )}
+          <button type="submit" disabled={!passwordMatch}>Register</button>
         </form>
         <button type="button" className="google">
           <p>Login in with Google</p>
