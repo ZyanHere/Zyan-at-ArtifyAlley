@@ -39,11 +39,15 @@ const Register = () => {
       });
 
       if (response.ok) {
-        Router.push("/");
+        router.push("/login");
       }
     } catch (error) {
       console.log("Registration failed", err.message);
     }
+  };
+
+  const loginWithGoogle = () => {
+    signIn("google", { callbackUrl: "/" });
   };
 
   const router = useRouter();
@@ -119,14 +123,7 @@ const Register = () => {
             Register
           </button>
         </form>
-        <button
-          type="button"
-          onClick={() => {
-            signIn("google");
-            router.push("/");
-          }}
-          className="google"
-        >
+        <button type="button" onClick={loginWithGoogle} className="google">
           <p>Login in with Google</p>
           <FcGoogle />
         </button>

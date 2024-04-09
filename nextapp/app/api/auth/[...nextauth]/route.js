@@ -1,6 +1,8 @@
 import User from "@models/User"
 import { connectDB } from "@mongodb/database"
+import { compare } from "bcryptjs";
 import NextAuth from "next-auth"
+import CredentialsProvider from "next-auth/providers/credentials";
 
 const handler = NextAuth({
     providers: [
@@ -14,29 +16,58 @@ const handler = NextAuth({
                     response_type: "code"
                 }
             }
-        })
+        }),
+        CredentialsProvider({
+            name: "Credentials",
+            async authorize(credentials, req) {
+                if (!credentials.email || !credentials.password) {
+                    throw new Error("Invalid Email or Password");
+                }
+
+                await connectDB();
+
+                /* Check if the user exists */
+                const user = await User.findOne({ email: credentials.email });
+
+                if (!user) {
+                    throw new Error("Invalid Email or Password");
+                }
+
+                /* Compare password */
+                const isMatch = await compare(credentials.password, user.password);
+
+                if (!isMatch) {
+                    throw new Error("Invalid Email or Password");
+                }
+
+                return user;
+            },
+        }),
     ],
+
+    secret: process.env.NEXTAUTH_SECRET,
+
     callbacks: {
         async session({ session }) {
-            const sessionUser = await User.findOne({email: session.user.email})
+            const sessionUser = await User.findOne({ email: session.user.email })
             session.user.id = sessionUser._id.toString()
             return session
         },
 
-        async signIn({ account, profile}) {
-            if(account.provider === "google"){
+        async signIn({ account, profile }) {
+            if (account.provider === "google") {
                 try {
                     await connectDB()
 
                     //check if the user exists in the database
                     const user = await User.findOne({ email: profile.email })
 
-                    if(!user) {
+                    if (!user) {
                         //create a new user
                         user = await User.create({
                             username: profile.name,
                             email: profile.email,
-                            profileImagePath: profile.image,
+                            profileImagePath: profile.picture,
                             wishlist: [],
                             cart: [],
                             order: [],
@@ -49,8 +80,9 @@ const handler = NextAuth({
                     console.error(error)
                 }
             }
+            return true;
         }
     }
 })
 
-export { handler as GET, handler as POST}
+export { handler as GET, handler as POST }
