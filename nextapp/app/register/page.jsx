@@ -1,6 +1,7 @@
 "use client";
 
 import "@styles/Register.scss";
+import { signIn } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { FcGoogle } from "react-icons/fc";
@@ -38,19 +39,19 @@ const Register = () => {
       });
 
       if (response.ok) {
-        Router.push("/")
+        Router.push("/");
       }
     } catch (error) {
-        console.log("Registration failed", err.message);
+      console.log("Registration failed", err.message);
     }
   };
 
   const router = useRouter();
 
-  const [passwordMatch, setPasswordMatch] = useState(true)
+  const [passwordMatch, setPasswordMatch] = useState(true);
   useEffect(() => {
-    setPasswordMatch(formData.password === formData.confirmPassword)
-  })
+    setPasswordMatch(formData.password === formData.confirmPassword);
+  });
 
   return (
     <div className="register">
@@ -93,9 +94,7 @@ const Register = () => {
             required
           />
           {!passwordMatched && (
-            <p style={{color: "red"}}>
-              Passwords do not match
-            </p>
+            <p style={{ color: "red" }}>Passwords do not match</p>
           )}
           <input
             id="image"
@@ -116,9 +115,18 @@ const Register = () => {
               style={{ maxWidth: "80px", maxHeight: "100px" }}
             />
           )}
-          <button type="submit" disabled={!passwordMatch}>Register</button>
+          <button type="submit" disabled={!passwordMatch}>
+            Register
+          </button>
         </form>
-        <button type="button" className="google">
+        <button
+          type="button"
+          onClick={() => {
+            signIn("google");
+            router.push("/");
+          }}
+          className="google"
+        >
           <p>Login in with Google</p>
           <FcGoogle />
         </button>
