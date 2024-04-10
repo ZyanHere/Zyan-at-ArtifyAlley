@@ -1,6 +1,6 @@
 "use client";
 import "@styles/Navbar.scss";
-import { Menu, Person, Search} from "@mui/icons-material";
+import { Menu, Person, Search, ShoppingCart} from "@mui/icons-material";
 import { IconButton } from "@mui/material";
 import { useSession } from "next-auth/react";
 import Link from "next/link";
@@ -26,6 +26,12 @@ const Navbar = () => {
       </div>
 
       <div className="navbar_right">
+        {user && (
+          <a href="/cart" className="cart">
+            <ShoppingCart sx={{ color: "gray" }}/>
+            Cart <span>({cart?.length})</span>
+          </a>
+        )}
         <button
           className="navbar_right_account"
           onClick={() => setDropdownMenu(!dropdownMenu)}
@@ -48,6 +54,18 @@ const Navbar = () => {
             <Link href="/register">Sign Up</Link>
           </div>
         )}
+
+        {dropdownMenu && user && (
+            <div className='navbar_right_accountmenu'>
+                <Link href="/wishlist">Wishlist</Link>
+                <Link href="/cart">Cart</Link>
+                <Link href="/order">Orders</Link>
+                <Link href={`/shop?id=${user._id}`}>Your Shop</Link>
+                <Link href="/create-work">Sell Your Work</Link>
+                <a onClick={handleLogout}>Log Out</a>
+            </div>
+        )}
+
       </div>
     </div>
   );
