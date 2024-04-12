@@ -26,7 +26,6 @@ const CreateWork = () => {
         type="Create"
         work={work}
         setWork={setWork}
-        handleSubmit={handleSubmit}
       />
     </>
   )

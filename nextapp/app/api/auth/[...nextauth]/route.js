@@ -3,6 +3,7 @@ import { connectDB } from "@mongodb/database"
 import { compare } from "bcryptjs";
 import NextAuth from "next-auth"
 import CredentialsProvider from "next-auth/providers/credentials";
+import GoogleProvider from "next-auth/providers/google";
 
 const handler = NextAuth({
     providers: [
@@ -63,7 +64,7 @@ const handler = NextAuth({
                     await connectDB()
 
                     //check if the user exists in the database
-                    const user = await User.findOne({ email: profile.email })
+                    let user = await User.findOne({ email: profile.email })
 
                     if (!user) {
                         //create a new user
