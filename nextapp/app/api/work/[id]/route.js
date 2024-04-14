@@ -56,11 +56,11 @@ export const PATCH = async (req, { params }) => {
         //find the existing work
         const existingWork = await Work.findByIdAndUpdate(params.id);
 
-        if(!existingWork) {
+        if (!existingWork) {
             return new Response("Work not found", { status: 404 })
         }
 
-            /* Update the Work with the new data */
+        /* Update the Work with the new data */
         existingWork.category = category
         existingWork.title = title
         existingWork.description = description
@@ -74,5 +74,17 @@ export const PATCH = async (req, { params }) => {
     } catch (error) {
         console.log(err)
         return new Response("Error updating the Work", { status: 500 })
+    }
+}
+
+export const DELETE = async (req, { params }) => {
+    try {
+        await connectToDB()
+        await Work.findByIdAndDelete(params.id)
+
+        return new Response("Successfully deleted the Work", { status: 200 })
+    } catch (err) {
+        console.log(err)
+        return new Response("Error deleting the Work", { status: 500 })
     }
 }
