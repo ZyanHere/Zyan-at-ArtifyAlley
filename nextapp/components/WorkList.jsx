@@ -1,11 +1,14 @@
-import React from 'react'
+import "@styles/WorkList.scss";
+import WorkCard from "./WorkCard";
 
-const WorkList = () => {
+const WorkList = ({ data }) => {
   return (
-    <div>
-      
+    <div className="work-list">
+      {data.map((work) => (
+        <WorkCard key={work._id} work={work} />
+      ))}
     </div>
-  )
-}
+  );
+};
 
-export default WorkList
+export default WorkList;
