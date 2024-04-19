@@ -1,8 +1,9 @@
 import { ArrowBackIosNew, ArrowForwardIos } from "@mui/icons-material";
+import { useRouter } from "next/navigation";
 import React, { useState } from "react";
 
 const WorkCard = () => {
-  const [currentindex, setCurrentIndex] = useState(0);
+  const [currentIndex, setCurrentIndex] = useState(0);
 
   const goToNextSlide = () => {
     setCurrentIndex(
@@ -18,8 +19,10 @@ const WorkCard = () => {
     );
   };
 
+  const router = useRouter();
+
   return (
-    <div className="work-card">
+    <div className="work-card" onClick={() => {router.push(`/work-details?id=${work._id}`)}}>
       <div className="slider-container">
         <div className="slider" style={{ transform: `translateX(-${currentIndex * 100}%)` }}>
           {Work.workPhotoPaths?.map((photo, index) => (
