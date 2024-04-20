@@ -14,6 +14,7 @@ import {
   Favorite,
 } from "@mui/icons-material";
 import { useSession } from "next-auth/react";
+import { useRouter } from "next/navigation";
 
 const WorkDetails = () => {
   const [loading, setLoading] = useState(true);
@@ -70,6 +71,8 @@ const WorkDetails = () => {
   const { data: session, update } = useSession();
   const userId = session?.user?._id;
 
+  const router = useRouter();
+
   return loading ? (
     <Loader />
   ) : (
@@ -79,7 +82,12 @@ const WorkDetails = () => {
         <div className="title">
           <h1>{work.title}</h1>
           {work?.creator?._id === userId ? (
-            <div className="save">
+            <div
+              className="save"
+              onClick={() => {
+                router.push(`/update-work?id=${workId}`);
+              }}
+            >
               <Edit />
               <p>Edit</p>
             </div>
@@ -150,7 +158,7 @@ const WorkDetails = () => {
         <p>{work.description}</p>
 
         <h1>${work.price}</h1>
-        <button type="submit" >
+        <button type="submit">
           <ShoppingCart />
           ADD TO CART
         </button>
