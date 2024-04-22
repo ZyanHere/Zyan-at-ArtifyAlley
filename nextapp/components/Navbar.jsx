@@ -12,6 +12,10 @@ const Navbar = () => {
   const user = session?.user;
   const [dropdownMenu, setDropdownMenu] = useState(false);
 
+  const handleLogout = async () => {
+    signOut({ callbackUrl: '/login' })
+  }
+
   return (
     <div className="navbar">
       <a href="/">
