@@ -3,6 +3,7 @@ import {
   ArrowForwardIos,
   FavoriteBorder,
 } from "@mui/icons-material";
+import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import React, { useState } from "react";
 
@@ -25,7 +26,7 @@ const WorkCard = () => {
 
   const router = useRouter();
 
-  const { data: session } = useSession();
+  const { data: session, update } = useSession();
   const userId = session?.user?._id;
 
   //delete work
@@ -45,6 +46,18 @@ const WorkCard = () => {
         console.log(error);
       }
     }
+  };
+
+  //add to wishlist
+  const wishlist = session?.user?.wishlist;
+  const isLiked = wishlist?.find((item) => item?._id === work._id);
+
+  const patchWishlist = async () => {
+    const response = await fetch(`api/user/${userId}/wishlist/${work._id}`, {
+      method: "PATCH",
+    });
+    const data = await response.json();
+    update({ user: { wishlist: data.wishlist } }); // update session
   };
 
   return (
@@ -102,15 +115,33 @@ const WorkCard = () => {
           />
         </div>
       ) : (
-        <div className="icon">
-          <FavoriteBorder
-            sx={{
-              borderRadius: "50%",
-              backgroundColor: "white",
-              padding: "5px",
-              fontSize: "30px",
-            }}
-          />
+        <div
+          className="icon"
+          onClick={(e) => {
+            e.stopPropagation();
+            patchWishlist();
+          }}
+        >
+          {isLiked ? (
+            <Favorite
+              sx={{
+                borderRadius: "50%",
+                backgroundColor: "white",
+                color: "red",
+                padding: "5px",
+                fontSize: "30px",
+              }}
+            />
+          ) : (
+            <FavoriteBorder
+              sx={{
+                borderRadius: "50%",
+                backgroundColor: "white",
+                padding: "5px",
+                fontSize: "30px",
+              }}
+            />
+          )}
         </div>
       )}
     </div>
