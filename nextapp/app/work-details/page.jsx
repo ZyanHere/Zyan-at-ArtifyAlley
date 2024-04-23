@@ -73,6 +73,24 @@ const WorkDetails = () => {
 
   const router = useRouter();
 
+  /* ADD TO WISHLIST */
+  const wishlist = session?.user?.wishlist;
+
+  const isLiked = wishlist?.find((item) => item?._id === work._id);
+
+  const patchWishlist = async () => {
+    if (!session) {
+      router.push("/login");
+      return;
+    }
+
+    const response = await fetch(`api/user/${userId}/wishlist/${work._id}`, {
+      method: "PATCH",
+    });
+    const data = await response.json();
+    update({ user: { wishlist: data.wishlist } }); // update session
+  };
+
   return loading ? (
     <Loader />
   ) : (
@@ -108,7 +126,7 @@ const WorkDetails = () => {
             className="slider"
             style={{ transform: `translateX(-${currentIndex * 100}%)` }}
           >
-            {Work.workPhotoPaths?.map((photo, index) => (
+            {work.workPhotoPaths?.map((photo, index) => (
               <div className="slide" key={index}>
                 <img src={photo} alt="work" />
                 <div className="prev-button" onClick={(e) => goToPrevSlide(e)}>
