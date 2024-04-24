@@ -23,6 +23,8 @@ const Navbar = () => {
     router.push(`/search/${query}`);
   };
 
+  const cart = user?.cart
+
   return (
     <div className="navbar">
       <a href="/">
