@@ -10,6 +10,7 @@ import {
 import { useSession } from "next-auth/react";
 import Loader from "@components/Loader";
 import "styles/Cart.scss";
+import toast from "react-hot-toast";
 
 const Cart = () => {
   const { data: session, update } = useSession();
@@ -60,6 +61,33 @@ const Cart = () => {
   };
 
   const subtotal = calcSubtotal(cart);
+
+  const handleCheckout = async () => {
+    const stripe = await getStripe()
+
+    const response = await fetch("/api/stripe", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ cart, userId }),
+    })
+
+    if (response.statusCode === 500) {
+      return
+    }
+
+    const data = await response.json()
+
+    toast.loading("Redirecting to checkout...")
+
+    const result = stripe.redirectToCheckout({ sessionId: data.id })
+
+    if (result.error) {
+      console.log(result.error.message)
+      toast.error("Something went wrong")
+    }
+  }
 
 
   return !session?.user?.cart ? (
@@ -129,7 +157,7 @@ const Cart = () => {
                 <a href="/">
                   <ArrowCircleLeft /> Continue Shopping
                 </a>
-                <button >CHECK OUT NOW</button>
+                <button onClick={handleCheckout}>CHECK OUT NOW</button>
               </div>
             </div>
           )}
