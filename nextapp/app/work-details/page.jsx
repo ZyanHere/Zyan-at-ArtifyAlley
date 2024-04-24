@@ -91,6 +91,47 @@ const WorkDetails = () => {
     update({ user: { wishlist: data.wishlist } }); // update session
   };
 
+  //add to cart
+  const cart = session?.user?.cart;
+  const isInCart = cart?.find((item) => item?.workId === workId);
+
+  const addToCart = async () => {
+    if (!session) {
+      router.push("/login");
+      return;
+    }
+
+    const newCartItem = {
+      workId,
+      image: work.workPhotoPaths[0],
+      title: work.title,
+      price: work.price,
+      category: work.category,
+      creator: work.creator,
+      quantity: 1,
+    };
+
+    if (!isInCart) {
+      const newCart = [...cart, newCartItem];
+
+      try {
+        await fetch(`/api/user/${userId}/cart`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ cart: newCart }),
+        });
+        update({ user: { cart: newCart } });
+      } catch (err) {
+        console.log(err);
+      }
+    } else {
+      confirm("This item is already in your cart");
+      return;
+    }
+  };
+
   return loading ? (
     <Loader />
   ) : (
@@ -110,7 +151,7 @@ const WorkDetails = () => {
               <p>Edit</p>
             </div>
           ) : (
-            <div className="save">
+            <div className="save" onClick={patchWishlist}>
               {isLiked ? (
                 <Favorite sx={{ color: "red" }} />
               ) : (
@@ -176,7 +217,7 @@ const WorkDetails = () => {
         <p>{work.description}</p>
 
         <h1>${work.price}</h1>
-        <button type="submit">
+        <button type="submit" onClick={addToCart}>
           <ShoppingCart />
           ADD TO CART
         </button>
