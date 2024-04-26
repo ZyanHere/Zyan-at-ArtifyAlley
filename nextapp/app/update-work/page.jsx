@@ -67,7 +67,7 @@ const UpdateWork = () => {
 
       const response = await fetch(`/api/work/${workId}`, {
         method: "PATCH",
-        body: updateFormWork,
+        body: updateFormWork
       });
 
       if (response.ok) {

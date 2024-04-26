@@ -15,7 +15,7 @@ const SearchPage = () => {
   const getWorkList = async () => {
     try {
       const response = await fetch(`/api/work/search/${query}`, {
-        method: "GET",
+        method: 'GET',
       });
       const data = await response.json();
       setWorkList(data);
@@ -34,7 +34,7 @@ const SearchPage = () => {
   ) : (
     <>
       <Navbar />
-      <h1>{query} results(s)</h1>
+      <h1 className='title-list'>{query} result(s)</h1>
       <WorkList data={workList} />
     </>
   );

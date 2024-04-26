@@ -1,11 +1,10 @@
 import Work from "@models/Work";
 import User from "@models/User";
-
-import { connectToDB } from "@mongodb/database";
+import { connectDB } from "@mongodb/database";
 
 export const GET = async (req, { params }) => {
   try {
-    await connectToDB();
+    await connectDB();
 
     const user = await User.findById(params.id);
     const workList = await Work.find({ creator: params.id }).populate("creator");

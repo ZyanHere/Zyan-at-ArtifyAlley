@@ -2,6 +2,8 @@ import {
   ArrowBackIosNew,
   ArrowForwardIos,
   FavoriteBorder,
+  Delete,
+  Favorite,
 } from "@mui/icons-material";
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
@@ -35,11 +37,11 @@ const WorkCard = () => {
 
     if (hasConfirmed) {
       try {
-        await fetch("api/work/${work._id}", {
+        await fetch(`api/work/${work._id}`, {
           method: "DELETE",
-          headers: {
-            "Content-Type": "application/json",
-          },
+          // headers: {
+          //   "Content-Type": "application/json",
+          // },
         });
         window.location.reload();
       } catch (error) {
@@ -53,6 +55,10 @@ const WorkCard = () => {
   const isLiked = wishlist?.find((item) => item?._id === work._id);
 
   const patchWishlist = async () => {
+    if (!session) {
+      router.push("/login");
+      return;
+    }
     const response = await fetch(`api/user/${userId}/wishlist/${work._id}`, {
       method: "PATCH",
     });
@@ -72,13 +78,25 @@ const WorkCard = () => {
           className="slider"
           style={{ transform: `translateX(-${currentIndex * 100}%)` }}
         >
-          {Work.workPhotoPaths?.map((photo, index) => (
+          {work.workPhotoPaths?.map((photo, index) => (
             <div className="slide" key={index}>
               <img src={photo} alt="work" />
-              <div className="prev-button" onClick={(e) => goToPrevSlide(e)}>
+              <div
+                className="prev-button"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  goToPrevSlide(e);
+                }}
+              >
                 <ArrowBackIosNew sx={{ fontSize: "15px" }} />
               </div>
-              <div className="next-button" onClick={(e) => goToNextSlide(e)}>
+              <div
+                className="next-button"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  goToNextSlide(e);
+                }}
+              >
                 <ArrowForwardIos sx={{ fontSize: "15px" }} />
               </div>
             </div>
@@ -91,7 +109,7 @@ const WorkCard = () => {
           <h3>{work.title}</h3>
           <div className="creator">
             <img src={work.creator.profileImagePath} alt="creator" />
-            <span>{work.creator.usrename}</span> in <span>{work.category}</span>
+            <span>{work.creator.username}</span> in <span>{work.category}</span>
           </div>
         </div>
         <div className="price">${work.price}</div>

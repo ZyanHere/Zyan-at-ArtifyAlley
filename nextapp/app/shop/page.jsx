@@ -6,7 +6,7 @@ import WorkList from "@components/WorkList";
 import { useSession } from "next-auth/react";
 import { useSearchParams } from "next/navigation";
 import React, { useEffect, useState } from "react";
-import "@styles/Shop.scss";
+import "@styles/Shop.scss"
 
 const Shop = () => {
   const [loading, setLoading] = useState(true);
@@ -15,6 +15,7 @@ const Shop = () => {
   const loggedInUserId = session?.user?._id;
 
   const searchParams = useSearchParams();
+  const profileId = searchParams.get("id");
 
   const [workList, setWorkList] = useState([]);
   const [profile, setProfile] = useState({});
@@ -33,24 +34,24 @@ const Shop = () => {
       setLoading(false);
     };
 
-    if (loggedInUserId) {
+    if (profileId) {
       getWorkList();
     }
-  }, [loggedInUserId]);
+  }, [profileId]);
 
-  return loading ? (
-    <Loader />
-  ) : (
+  return loading ? <Loader /> : (
     <>
       <Navbar />
 
-      {loggedInUserId && <h1 className="title-list">Your Works</h1>}
+      {loggedInUserId === profileId && (
+        <h1 className="title-list">Your Works</h1>
+      )}
 
-      {loggedInUserId && (
+      {loggedInUserId !== profileId && (
         <h1 className="title-list">{profile.username}'s Works</h1>
       )}
 
-      <WorkList data={workList} />
+      <WorkList data={workList}/>
     </>
   );
 };

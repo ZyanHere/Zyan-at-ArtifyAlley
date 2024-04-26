@@ -20,12 +20,12 @@ const WorkDetails = () => {
   const [loading, setLoading] = useState(true);
   const [work, setWork] = useState({});
   const searchParams = useSearchParams();
-  const workId = searchParams.get(id);
+  const workId = searchParams.get("id");
 
   //get work details
   useEffect(() => {
     const getWorkDetails = async () => {
-      const response = await fetch(`/api/work/${workId}`, {
+      const response = await fetch(`api/work/${workId}`, {
         method: "GET",
       });
       const data = await response.json();
@@ -36,6 +36,9 @@ const WorkDetails = () => {
       getWorkDetails();
     }
   }, [workId]);
+
+  const { data: session, update } = useSession();
+  const userId = session?.user?._id;
 
   const [currentIndex, setCurrentIndex] = useState(0);
 
@@ -68,8 +71,6 @@ const WorkDetails = () => {
     setCurrentIndex(index);
   };
 
-  const { data: session, update } = useSession();
-  const userId = session?.user?._id;
 
   const router = useRouter();
 

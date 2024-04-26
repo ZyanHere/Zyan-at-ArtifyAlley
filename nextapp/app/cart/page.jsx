@@ -11,6 +11,7 @@ import { useSession } from "next-auth/react";
 import Loader from "@components/Loader";
 import "styles/Cart.scss";
 import toast from "react-hot-toast";
+import getStripe from "@lib/getStripe";
 
 const Cart = () => {
   const { data: session, update } = useSession();

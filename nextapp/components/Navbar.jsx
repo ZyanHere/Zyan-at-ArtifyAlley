@@ -2,7 +2,7 @@
 import "@styles/Navbar.scss";
 import { Menu, Person, Search, ShoppingCart } from "@mui/icons-material";
 import { IconButton } from "@mui/material";
-import { useSession } from "next-auth/react";
+import { signOut, useSession } from "next-auth/react";
 import Link from "next/link";
 import React, { useState } from "react";
 import { useRouter } from "next/navigation";
@@ -13,7 +13,7 @@ const Navbar = () => {
   const [dropdownMenu, setDropdownMenu] = useState(false);
 
   const handleLogout = async () => {
-    signOut({ callbackUrl: "/login" });
+    signOut({ callbackUrl: '/login' });
   };
 
   const [query, setQuery] = useState("");

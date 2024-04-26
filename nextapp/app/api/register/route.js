@@ -31,7 +31,7 @@ export async function POST(req) {
         console.log(`open ${profileImagePath} to see the uploaded files`)
 
         //check if user exist
-        const user = await User.findOne({ username })
+        const user = await User.findOne({ email })
         if (user) {
             return NextResponse.json(
                 { message: "user already exist" },
@@ -48,7 +48,7 @@ export async function POST(req) {
             username,
             email,
             password: hashedPassword,
-            profileImage: `/uploads/${file.name}`
+            profileImagePath: `/uploads/${file.name}`
         })
 
         //save new user
@@ -60,7 +60,7 @@ export async function POST(req) {
              { status: 200 })
 
     } catch (error) {
-        console.error(error)
+        console.log(error)
         return NextResponse.json(
             { message: error.message },
             { status: 500 }

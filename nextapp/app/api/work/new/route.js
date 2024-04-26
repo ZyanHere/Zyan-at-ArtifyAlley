@@ -9,7 +9,7 @@ export async function POST(req) {
         const data = await req.formData();
 
         //extract info from data
-        const creator = data.get('creator');
+        const creator = data.get("creator");
         const category = data.get("category")
         const title = data.get("title")
         const description = data.get("description")

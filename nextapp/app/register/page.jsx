@@ -15,15 +15,22 @@ const Register = () => {
     profileImage: null,
   });
 
-  const handleChange = () => {
+  const handleChange = (e) => {
     e.preventDefault();
     const { name, value, files } = e.target;
     setFormData({
       ...formData,
       [name]: value,
-      [name]: name === profileImage ? files[0] : value,
+      [name]: name === "profileImage" ? files[0] : value,
     });
   };
+
+  const router = useRouter();
+  const [passwordMatch, setPasswordMatch] = useState(true);
+
+  useEffect(() => {
+    setPasswordMatch(formData.password === formData.confirmPassword);
+  });
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -50,13 +57,6 @@ const Register = () => {
     signIn("google", { callbackUrl: "/" });
   };
 
-  const router = useRouter();
-
-  const [passwordMatch, setPasswordMatch] = useState(true);
-  useEffect(() => {
-    setPasswordMatch(formData.password === formData.confirmPassword);
-  });
-
   return (
     <div className="register">
       <img
@@ -68,7 +68,7 @@ const Register = () => {
         <form className="register_content_form" onSubmit={handleSubmit}>
           <input
             placeholder="Username"
-            name="usename"
+            name="username"
             value={formData.username}
             onChange={handleChange}
             required
@@ -92,18 +92,19 @@ const Register = () => {
           <input
             placeholder="Confirm Password"
             type="password"
-            name="confirm password"
+            name="confirmPassword"
             value={formData.confirmPassword}
             onChange={handleChange}
             required
           />
-          {!passwordMatched && (
+          {!passwordMatch && (
             <p style={{ color: "red" }}>Passwords do not match</p>
           )}
           <input
             id="image"
             type="file"
             name="profileImage"
+            onChange={handleChange}
             accept="image/*"
             style={{ display: "none" }}
             required
